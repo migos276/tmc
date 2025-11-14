@@ -1,0 +1,23 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build and push Docker images
+      run: |
+        docker-compose build
+        # Push to registry here
+    
+    - name: Deploy to server
+      run: |
+        # SSH to server and pull latest, run migrations, restart services
+        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          'cd /app && docker-compose pull && docker-compose up -d'

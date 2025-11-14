@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0066CC" />
+    <meta name="description" content="CamMarket+ - Plateforme multi-services camerounaise" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>CamMarket+ - Marché en ligne & Services</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('%PUBLIC_URL%/service-worker.js');
+        });
+      }
+    </script>
+  </body>
+</html>

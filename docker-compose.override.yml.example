@@ -1,0 +1,26 @@
+# Local development overrides
+# Copy to docker-compose.override.yml to use
+
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        - ENV=development
+    environment:
+      DEBUG: "True"
+      DJANGO_LOG_LEVEL: DEBUG
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+
+  frontend:
+    environment:
+      REACT_APP_DEBUG: "true"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public

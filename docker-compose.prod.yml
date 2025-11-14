@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: cammarket
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - cammarket_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DEBUG: "False"
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DB_HOST: db
+      DB_PASSWORD: ${DB_PASSWORD}
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - cammarket_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - cammarket_network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+    restart: always
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - cammarket_network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  cammarket_network:
+    driver: bridge
